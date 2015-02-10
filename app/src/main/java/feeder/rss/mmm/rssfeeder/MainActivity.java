@@ -73,7 +73,7 @@ public class MainActivity extends ActionBarActivity {
                 conn = (HttpURLConnection)
                 url.openConnection();
                 conn.connect();
-                //there should be other data upward but here is just a try
+                //there should be other data upward but here is just atry
 
                 is = conn.getInputStream();
                 //Read Data
