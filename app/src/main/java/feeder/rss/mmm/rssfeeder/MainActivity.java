@@ -1,18 +1,36 @@
 package feeder.rss.mmm.rssfeeder;
 
+import android.os.AsyncTask;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
 
 
 public class MainActivity extends ActionBarActivity {
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        //teeeeeeeeeeeeeeeeeeeeeeeeesssst
+
+
+        String url="http://downloads.bbc.co.uk/podcasts/manchester/mancity/rss.xml";
+        FeedGet feedGet = new FeedGet();
+        feedGet.execute(url);
+
     }
 
 
@@ -37,4 +55,50 @@ public class MainActivity extends ActionBarActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+
+
+    private class FeedGet extends AsyncTask <String,String,ArrayList<RssFeed>>{
+
+
+        @Override
+        protected ArrayList<RssFeed> doInBackground(String... params) {
+
+        String sUrl=params[0];
+        InputStream is = null;
+
+            try {
+                URL url = new URL(sUrl);
+                HttpURLConnection conn;
+                conn = (HttpURLConnection)
+                url.openConnection();
+                conn.connect();
+                //there should be other data upward but here is just a try
+
+                is = conn.getInputStream();
+                //Read Data
+                final int bufferSize = 1024;
+                byte[] buffer = new byte[1024];
+                ByteArrayOutputStream os = new ByteArrayOutputStream();
+                while(true) {
+                    int count = is.read(buffer, 0, bufferSize);
+                    if(count == -1) {
+                        break;
+                    }
+
+                    os.write(buffer); }
+                    os.close();
+
+                String result = new String(os.toByteArray(), "UTF-8");
+                Toast.makeText(MainActivity.this, result , Toast.LENGTH_LONG).show();
+
+            } catch (java.io.IOException e) {
+                e.printStackTrace();
+            }
+
+
+            return null;
+        }
+        }
+
 }
